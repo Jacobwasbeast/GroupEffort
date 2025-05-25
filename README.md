@@ -1,11 +1,11 @@
 # GroupEffort
 
-[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.1-blue)](https://www.minecraft.net)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21.1-blue)](https://www.minecraft.net)
 [![Requires Fabric API](https://img.shields.io/badge/Requires-Fabric%20API-orange)](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
 [![Requires Cloth Config](https://img.shields.io/badge/Requires-Cloth%20Config-blueviolet)](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
 [![CurseForge](https://img.shields.io/badge/CurseForge-Group%20Effort-red)](https://www.curseforge.com/minecraft/mc-mods/group-effort)
 
-**GroupEffort** is a server-side Fabric mod for Minecraft 1.20.1, designed to encourage cooperative play by making server activity contingent on a minimum number of online players. When the player count falls below a configurable threshold, the server enters a restricted "limbo" state until enough players join the effort!
+**GroupEffort** is a server-side Fabric mod for Minecraft 1.21.1, designed to encourage cooperative play by making server activity contingent on a minimum number of online players. When the player count falls below a configurable threshold, the server enters a restricted "limbo" state until enough players join the effort!
 
 ## Core Concept
 
