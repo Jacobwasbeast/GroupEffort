@@ -5,9 +5,12 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.jacobwasbeast.groupeffort.command.GroupEffortCommands;
 import net.jacobwasbeast.groupeffort.config.GroupEffortConfig;
 import net.jacobwasbeast.groupeffort.manager.GroupEffortManager;
+import net.jacobwasbeast.groupeffort.network.DisableClientLimboVisualsS2CPacket;
+import net.jacobwasbeast.groupeffort.network.EnableClientLimboVisualsS2CPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,16 @@ public class GroupEffort implements ModInitializer {
             GroupEffortManager.init(server, getConfig());
             GroupEffortManager.updateGlobalLimboState();
         });
+
+        PayloadTypeRegistry.playS2C().register(
+                DisableClientLimboVisualsS2CPacket.PACKET_ID,
+                DisableClientLimboVisualsS2CPacket.PACKET_CODEC
+        );
+
+        PayloadTypeRegistry.playS2C().register(
+                EnableClientLimboVisualsS2CPacket.PACKET_ID,
+                EnableClientLimboVisualsS2CPacket.PACKET_CODEC
+        );
 
         CommandRegistrationCallback.EVENT.register(GroupEffortCommands::register);
     }

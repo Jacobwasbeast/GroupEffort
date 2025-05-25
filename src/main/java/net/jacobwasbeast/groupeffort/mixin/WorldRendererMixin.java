@@ -29,13 +29,15 @@ public abstract class WorldRendererMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private void groupeffort_onRender(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f projectionMatrix, CallbackInfo ci) {
+    private void groupeffort_onRender(RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, Matrix4f matrix4f2, CallbackInfo ci) {
         if (ClientLimboState.shouldRenderEndSkyForVoidLimbo) {
             ci.cancel();
             if (MinecraftClient.getInstance().currentScreen instanceof DownloadingTerrainScreen) {
                 MinecraftClient.getInstance().setScreen(null);
             }
-            this.renderEndSky(matrices);
+            MatrixStack matrixStack = new MatrixStack();
+            matrixStack.multiplyPositionMatrix(matrix4f);
+            renderEndSky(matrixStack);
         }
     }
 }

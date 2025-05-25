@@ -5,6 +5,7 @@ import net.jacobwasbeast.groupeffort.manager.GroupEffortManager;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +20,7 @@ public abstract class PlayerManagerMixin {
     @Shadow @Final private MinecraftServer server;
 
     @Inject(method = "onPlayerConnect", at = @At("TAIL"))
-    private void groupeffort_onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    private void groupeffort_onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         // Use this.server from PlayerManager context
         GroupEffortManager.init(this.server, GroupEffort.getConfig());
         GroupEffortManager.onPlayerJoin(player);

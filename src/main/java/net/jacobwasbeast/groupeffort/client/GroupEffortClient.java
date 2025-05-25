@@ -2,7 +2,8 @@ package net.jacobwasbeast.groupeffort.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.jacobwasbeast.groupeffort.network.UpdateClientLimboVisualsS2CPacket;
+import net.jacobwasbeast.groupeffort.network.DisableClientLimboVisualsS2CPacket;
+import net.jacobwasbeast.groupeffort.network.EnableClientLimboVisualsS2CPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,13 +18,24 @@ public class GroupEffortClient implements ClientModInitializer {
     }
 
     public static void registerPacketHandlers() {
-        ClientPlayNetworking.registerGlobalReceiver(UpdateClientLimboVisualsS2CPacket.PACKET_ID, (client, handler, buf, responseSender) -> {
-            boolean shouldRenderEndSky = buf.readBoolean();
-            client.execute(() -> {
-                ClientLimboState.shouldRenderEndSkyForVoidLimbo = shouldRenderEndSky;
-                LOGGER.info("Received UpdateClientLimboVisualsS2CPacket, shouldRenderEndSky: {}", shouldRenderEndSky);
-            });
-        });
-        LOGGER.info("Registered S2C packet handler for UpdateClientLimboVisualsS2CPacket.");
+        ClientPlayNetworking.registerGlobalReceiver(
+                EnableClientLimboVisualsS2CPacket.PACKET_ID,
+                (packet, context) -> {
+                    context.client().execute(() -> {
+                        ClientLimboState.shouldRenderEndSkyForVoidLimbo = true;
+                        LOGGER.info("Received UpdateClientLimboVisualsS2CPacket, shouldRenderEndSky: {}", true);
+                    });
+                }
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                DisableClientLimboVisualsS2CPacket.PACKET_ID,
+                (packet, context) -> {
+                    context.client().execute(() -> {
+                        ClientLimboState.shouldRenderEndSkyForVoidLimbo = false;
+                        LOGGER.info("Received UpdateClientLimboVisualsS2CPacket, shouldRenderEndSky: {}", false);
+                    });
+                }
+        );
+        LOGGER.info("Registered S2C payload and handler for UpdateClientLimboVisualsS2CPacket.");
     }
 }

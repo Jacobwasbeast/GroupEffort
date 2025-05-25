@@ -1,14 +1,17 @@
 package net.jacobwasbeast.groupeffort.manager;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.jacobwasbeast.groupeffort.GroupEffort;
 import net.jacobwasbeast.groupeffort.api.LimboAPI;
 import net.jacobwasbeast.groupeffort.config.GroupEffortConfig;
+import net.jacobwasbeast.groupeffort.network.DisableClientLimboVisualsS2CPacket;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -254,17 +257,6 @@ public class GroupEffortManager {
             originalWorld = server.getOverworld();
         }
         final ServerWorld finalOriginalWorld = originalWorld;
-        RegistryKey<DimensionType> originalDimensionTypeKey = finalOriginalWorld.getDimensionEntry().getKey()
-                .orElseThrow(() -> new IllegalStateException("DimensionType key missing for world: " + finalOriginalWorld.getRegistryKey().getValue()));
-
-        // 3. Send PlayerRespawnS2CPacket to switch client back to original dimension FIRST
-        PlayerRespawnS2CPacket respawnPacket = new PlayerRespawnS2CPacket(
-                originalDimensionTypeKey, finalOriginalWorld.getRegistryKey(), finalOriginalWorld.getSeed(),
-                originalData.gameMode, originalData.previousGameMode, finalOriginalWorld.isDebugWorld(),
-                finalOriginalWorld.isFlat(), PlayerRespawnS2CPacket.KEEP_ALL,
-                player.getLastDeathPos(), player.getPortalCooldown()
-        );
-        player.networkHandler.sendPacket(respawnPacket);
         GroupEffort.LOGGER.info("Sent PlayerRespawnS2CPacket to {} to return to original dimension: {}", player.getName().getString(), finalOriginalWorld.getRegistryKey().getValue());
 
         // 4. Teleport player server-side to original position AFTER client knows it's in the right dimension
@@ -289,7 +281,7 @@ public class GroupEffortManager {
                 if (player.isRemoved()) return;
 
                 for (StatusEffectInstance effectInstance : player.getStatusEffects()) {
-                    player.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(player.getId(), effectInstance));
+                    player.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(player.getId(), effectInstance, true));
                 }
 
                 DefaultedList<ItemStack> currentInventoryStacks = DefaultedList.ofSize(player.playerScreenHandler.getStacks().size(), ItemStack.EMPTY);
